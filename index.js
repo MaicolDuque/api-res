@@ -2,6 +2,7 @@
 
 const express = require("express") //Es un framework para node js
 const bodyParser = require("body-parser") //Body parser es un middleware
+const mongoose = require("mongoose")
 
 const app = express();
 const port = process.env.PORT || 3000
@@ -34,6 +35,13 @@ app.delete("/api/product/:id", (req, res) => {
 
 
 
-app.listen(port, () => {
-    console.log(`API REST Escuchando en puerto ${port}`)
+//conectar a la base de datos
+mongoose.connect('mongodb://localhost:27017/shop', (err, res) => {
+    if(err) throw err
+    console.log('Conexión a la base de datos establecida...')
+
+    
+    app.listen(port, () => {
+        console.log(`API REST Escuchando en puerto ${port}`)
+    })
 })
