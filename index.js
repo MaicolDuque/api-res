@@ -6,6 +6,8 @@ const mongoose = require("mongoose")
 
 const Product = require("./models/product")
 
+const productController = require("./controllers/product")
+
 const app = express();
 const port = process.env.PORT || 3000
 
@@ -13,71 +15,21 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
-app.get('/api/product', (req, res) => {
-    Product.find({}, (err, products) => {
-        if (err) return res.status(500).send({ message: `Error al realizar la petición ${err}` })
-        if (!products) return res.status(404).send({ message: "No existen prodcutos!" })
-        
-        res.send(200, { products })
-    })
-})
 
-app.get('/api/product/:id', (req, res) => {
-    let productID = req.params.id 
+//Visualiar todos los productos
+app.get('/api/product', productController.getProducts)
 
-    Product.findById(productID, (err, product) => {
-        if(err) return res.status(500).send({message: `Error al realizar la petición ${err}`})
-        if(!product) return res.status(404).send({message: "El producto no existe.."})
+//Visuazliar un producto
+app.get('/api/product/:id', productController.getProduct)
 
-        res.status(200).send({product})
-    })
-})
-
-app.post("/api/product", (req, res) => {
-    console.log('POST  /api/product')
-    console.log(req.body)
-
-    let product = new Product()
-    product.name    = req.body.name
-    product.picture = req.body.picture
-    product.price   = req.body.price
-    product.category = req.body.category
-    product.description = req.body.description
-
-    product.save((err, productStore) => {
-        if(err) res.status(500).send({mensaje: 'Error al guardar'})
-        res.status(200).send({ product: productStore })
-    })
-
-})
-
+//Insertar
+app.post("/api/product", productController.addProduct)
 
 //Actualizar
-app.put("/api/product/:id", (req, res) => {
-    let productID = req.params.id 
-    let body = req.body 
-    Product.findByIdAndUpdate(productID, body, (err, productUpdated) => {
-        if (err) res.status(500).send({ mensaje: 'Error al actualizar el producto' })
-        
-        res.status(200).send({ product: productUpdated })        
-    })
-})
-
-
+app.put("/api/product/:id", productController.updateProduct)
 
 //Eliminar
-app.delete("/api/product/:id", (req, res) => {
-    let productID = req.params.id 
-    Product.findById(productID, (err, product) => {
-        if (err) return res.status(500).send({ message: `Error al borrar el producto: ${err}` })
-        product.remove(err => {
-            if (err) return res.status(500).send({ message: `Error al borrar el producto: ${err}` })            
-            res.status(200).send({ message: 'Prodcuto borrado exitosamente!' })
-        })
-
-    })
-
-})
+app.delete("/api/product/:id", productController.deleteProduct)
 
 
 
