@@ -28,9 +28,9 @@ app.post("/api/product", productController.addProduct)
 //Actualizar
 app.put("/api/product/:id", productController.updateProduct)
 
-//Eliminar
-app.delete("/api/product/:id", productController.deleteProduct)
 
+////Eliminar
+app.delete("/api/product/:id", productController.deleteProduct)
 
 
 
